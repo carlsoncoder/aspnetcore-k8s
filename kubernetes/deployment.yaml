@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnetcore-k8s-deployment
+  labels:
+    app: aspnetcore-k8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+        app: aspnetcore-k8s
+  template:
+    metadata:
+      labels:
+        app: aspnetcore-k8s
+    spec:
+      containers:
+      - name: aspnetcore-k8s-main
+        image: carlsoncoder/aspnetcore-k8s:v1
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443

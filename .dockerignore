@@ -1,0 +1,12 @@
+# directories
+**/bin/
+**/obj/
+**/out/
+**/*.user
+.git
+.cache
+certs/other/
+
+# files
+Dockerfile*
+**/*.md
