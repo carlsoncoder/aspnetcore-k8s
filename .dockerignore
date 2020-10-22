@@ -5,7 +5,7 @@
 **/*.user
 .git
 .cache
-certs/other/
+certs/
 
 # files
 Dockerfile*

@@ -5,10 +5,4 @@
     <RootNamespace>aspnetcore_k8s</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="certs\aspnetcore-k8s.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>  
-  </ItemGroup>
-
 </Project>

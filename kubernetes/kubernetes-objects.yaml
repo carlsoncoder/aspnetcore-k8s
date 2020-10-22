@@ -51,7 +51,7 @@ spec:
         app: aspnetcore-k8s-root
     spec:
       containers:
-      - image: carlsoncoder/aspnetcore-k8s:v3
+      - image: carlsoncoder/aspnetcore-k8s:v4
         name: aspnetcore-k8s-root-main
         volumeMounts:
           - mountPath: "/etc/app/pfx"
@@ -61,7 +61,7 @@ spec:
         - name: CUSTOM_APPLICATION_NAME
           value: "app-root"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Path
-          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+          value: "/etc/app/pfx/backend.pfx"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Password
           valueFrom:
             secretKeyRef:
@@ -99,7 +99,7 @@ spec:
         app: aspnetcore-k8s-api
     spec:
       containers:
-      - image: carlsoncoder/aspnetcore-k8s:v3
+      - image: carlsoncoder/aspnetcore-k8s:v4
         name: aspnetcore-k8s-api-main
         volumeMounts:
           - mountPath: "/etc/app/pfx"
@@ -109,7 +109,7 @@ spec:
         - name: CUSTOM_APPLICATION_NAME
           value: "app-api"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Path
-          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+          value: "/etc/app/pfx/backend.pfx"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Password
           valueFrom:
             secretKeyRef:
@@ -147,7 +147,7 @@ spec:
         app: aspnetcore-k8s-calc
     spec:
       containers:
-      - image: carlsoncoder/aspnetcore-k8s:v3
+      - image: carlsoncoder/aspnetcore-k8s:v4
         name: aspnetcore-k8s-calc-main
         volumeMounts:
           - mountPath: "/etc/app/pfx"
@@ -157,7 +157,7 @@ spec:
         - name: CUSTOM_APPLICATION_NAME
           value: "app-calc"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Path
-          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+          value: "/etc/app/pfx/backend.pfx"
         - name: ASPNETCORE_Kestrel__Certificates__Default__Password
           valueFrom:
             secretKeyRef:
