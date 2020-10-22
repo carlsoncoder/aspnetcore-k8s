@@ -1,7 +1,8 @@
 namespace aspnetcore_k8s.Controllers
 {
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;    
 
     [ApiController]
     [Route("[controller]")]
@@ -11,9 +12,16 @@ namespace aspnetcore_k8s.Controllers
 
         private readonly ILogger<PodInfoController> _logger;
 
-        public PodInfoController(ILogger<PodInfoController> logger)
+        private readonly IHttpContextAccessor _context;
+
+        #endregion
+
+        #region Constructors
+
+        public PodInfoController(ILogger<PodInfoController> logger, IHttpContextAccessor context)
         {
             this._logger = logger;
+            this._context = context;
         }
 
         #endregion
@@ -22,8 +30,9 @@ namespace aspnetcore_k8s.Controllers
 
         [HttpGet]
         public PodInfo Get()
-        {            
-            return new PodInfo();
+        {
+            var httpRequest = this._context.HttpContext.Request;
+            return new PodInfo(httpRequest);
         }
 
         #endregion
