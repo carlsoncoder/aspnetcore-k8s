@@ -3,7 +3,9 @@
 
 # Generated certificates
 certs/
-kubernetes/deploy-aks-cluster.sh
+kubernetes/aks-cluster-deploy.sh
+kubernetes/arm-aad-identity-deploy.sh
+kubernetes/agic-ingresscontroller-helm-deploy.sh
 
 # User-specific files
 *.suo
