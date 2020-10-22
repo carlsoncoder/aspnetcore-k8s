@@ -8,7 +8,7 @@ spec:
   ports:
     - protocol: TCP
       port: 443
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -20,7 +20,7 @@ spec:
   ports:
     - protocol: TCP
       port: 443
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -32,7 +32,7 @@ spec:
   ports:
     - protocol: TCP
       port: 443
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
