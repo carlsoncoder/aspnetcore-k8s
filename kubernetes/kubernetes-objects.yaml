@@ -1,0 +1,180 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aspnetcore-k8s-service-root
+spec:
+  selector:
+    app: aspnetcore-k8s-root
+  ports:
+    - protocol: TCP
+      port: 443
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aspnetcore-k8s-service-api
+spec:
+  selector:
+    app: aspnetcore-k8s-api
+  ports:
+    - protocol: TCP
+      port: 443
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aspnetcore-k8s-service-calc
+spec:
+  selector:
+    app: aspnetcore-k8s-calc
+  ports:
+    - protocol: TCP
+      port: 443
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnetcore-k8s-deployment-root
+  labels:
+    app: aspnetcore-k8s-root
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aspnetcore-k8s-root
+  template:
+    metadata:
+      labels:
+        app: aspnetcore-k8s-root
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v3
+        name: aspnetcore-k8s-root-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "app-root"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnetcore-k8s-deployment-api
+  labels:
+    app: aspnetcore-k8s-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aspnetcore-k8s-api
+  template:
+    metadata:
+      labels:
+        app: aspnetcore-k8s-api
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v3
+        name: aspnetcore-k8s-api-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "app-api"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aspnetcore-k8s-deployment-calc
+  labels:
+    app: aspnetcore-k8s-calc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aspnetcore-k8s-calc
+  template:
+    metadata:
+      labels:
+        app: aspnetcore-k8s-calc
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v3
+        name: aspnetcore-k8s-calc-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "app-calc"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/aspnetcore-k8s.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+---
