@@ -3,6 +3,7 @@
 
 # Generated certificates
 certs/
+kubernetes/deploy-aks-cluster.sh
 
 # User-specific files
 *.suo
