@@ -4,7 +4,7 @@
 SUBSCRIPTION_ID=""
 
 function load_variables() {
-    export $(grep -v '#.*' .variables | xargs)
+    export $(grep -v '#.*' variables | xargs)
 }
 
 function login() {

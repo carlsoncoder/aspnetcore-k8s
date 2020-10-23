@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# The public key value of the SSH key.  You will need the private key yourself to eventually log into the nodes via SSH
+SSH_PUBLIC_KEY=""
+
 function load_variables() {
-    export $(grep -v '#.*' .variables | xargs)
+    export $(grep -v '#.*' variables | xargs)
 }
 
 function login() {  

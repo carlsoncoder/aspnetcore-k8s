@@ -7,6 +7,8 @@
    - backend.pfx
    - frontend.pem
    - frontend-key.pem
+- Manually assign the CA.pem script as a trusted root on the machine you'll be accessing the gateway from
+- Manually update the "SSH_PUBLIC_KEY" parameter at the top of the "aks-cluster-deploy.sh" script
 - Run the "aks-cluster-deploy.sh" script - this will do the following:
    - Deploy a resource group
    - Deploy an AKS cluster
@@ -25,6 +27,8 @@
 - Run the "agic-ingresscontroller-helm-deploy.sh" script - this will do the following:
    - Update your local helm repo
    - Deploy the Application Gateway Ingress Controller helm chart
+- Ensure that the ingress controller pod is up and running successfully before the next step!
+- Deploy some ingress resources and test it out
 
 # Deleting all resources when you're done
 - Ensure all values in the deployment/variables file are correct

@@ -73,6 +73,3 @@ AAD_ARM_IDENTITY_NAME=""
 
 # The password you used to create your private key password on the certificate
 CERTIFICATE_PRIVATE_KEY_PASSWORD=""
-
-# The public key value of the SSH key.  You will need the private key yourself to eventually log into the nodes via SSH
-SSH_PUBLIC_KEY=""
