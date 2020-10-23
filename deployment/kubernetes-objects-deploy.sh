@@ -7,7 +7,6 @@ function load_variables() {
 function create_kubernetes_secrets() {
     kubectl -n default create secret generic backend-wildcard-pfx --from-file="certs/backend.pfx"
     kubectl -n default create secret generic backend-wildcard-pfx-password --from-literal=password="$CERTIFICATE_PRIVATE_KEY_PASSWORD"
-    kubectl -n default create secret tls frontend-tls --key "certs/frontend-key.pem" --cert "certs/frontend.pem"
 }
 
 function apply_kubernetes_objects() {

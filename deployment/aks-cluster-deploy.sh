@@ -83,12 +83,20 @@ function create_application_gateway() {
       --public-ip-address "$APPLICATION_GATEWAY_PUBLIC_IP_NAME" \
       --private-ip-address "$APPLICATION_GATEWAY_PRIVATE_IP_ADDRESS"
 
-    echo "$(date +"%Y-%m-%d %T") - Assigning backend CA as root cert for application gateway..."
+    echo "$(date +"%Y-%m-%d %T") - Assigning backend CA as root-cert for application gateway..."
     az network application-gateway root-cert create \
       --name "backend-ca-tls" \
       --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" \
       --gateway-name "$APPLICATION_GATEWAY_NAME" \
-      --cert-file "certs/ca.pem"
+      --cert-file "certs/ca.crt"
+
+    echo "$(date +"%Y-%m-%d %T") - Assigning frontend cert as ssl-cert for application gateway..."
+    az network application-gateway ssl-cert create \
+      --name "frontend-tls"
+      --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" \
+      --gateway-name "$APPLICATION_GATEWAY_NAME" \
+      --cert-file "certs/frontend.pfx" \
+      --cert-password "$CERTIFICATE_PRIVATE_KEY_PASSWORD"
 }
 
 function create_dns_record() {

@@ -1,131 +1,67 @@
 #!/bin/bash
-# Derived from https://github.com/kelseyhightower/kubernetes-the-hard-way/blob/master/docs/04-certificate-authority.md
 
-# YOU MUST SET THIS TO YOUR DESIRED FRONTEND HOSTNAME!!!
-FRONTEND_HOSTNAME=""
+function generate_ca() {
+    echo "$(date +"%Y-%m-%d %T") - Generating Root CA certificate..."
+    openssl genrsa -aes256 -out ca.key
+    openssl req -x509 -new -nodes -key ca.key -sha256 -days 365 -out ca.crt -config certs/conf/ca.conf
 
-BACKEND_CERT_NAME="backend"
-KUBERNETES_BACKEND_HOSTNAME="*.svc.cluster.local"
-FRONTEND_CERT_NAME="frontend"
-
-function validation() {
-  if [ -z "$FRONTEND_HOSTNAME" ]; then
-    echo "Frontend hostname not defined, exiting script!"
-    cd ..
-    exit 1
-  fi
-
-  DIR="ca"
-  if [ -d "$DIR" ]; then
-    echo "Certificates have already been created, exiting script!"
-    cd ..
-    exit 1
-  fi
+    openssl pkcs12 -export -out ca.pfx -inkey ca.key -in ca.crt
+    openssl x509 -inform pem -in ca.crt -outform der -out ca.cer
+    openssl x509 -inform der -in ca.cer -out ca.pem
 }
 
-function generate-ca() {
-  cat > ca-config.json <<EOF
-  {
-    "signing": {
-      "default": {
-        "expiry": "8760h"
-      },
-      "profiles": {
-        "kubernetes": {
-          "usages": ["signing", "key encipherment", "server auth", "client auth"],
-          "expiry": "8760h"
-        }
-      }
-    }
-  }
-EOF
-
-  cat > ca-csr.json <<EOF
-  {
-    "CN": "Kubernetes",
-    "key": {
-      "algo": "rsa",
-      "size": 2048
-    },
-    "names": [
-      {
-        "C": "US",
-        "L": "Hartford",
-        "O": "Kubernetes",
-        "OU": "CA",
-        "ST": "Wisconsin"
-      }
-    ]
-  }
-EOF
-
-  cfssl gencert -initca ca-csr.json | cfssljson -bare ca
-
-  # Now we need to use the private and public key PEM files to generate a PFX file
-  openssl pkcs12 -inkey ca-key.pem -in ca.pem -export -out ca.pfx
+function generate_frontend_certificate() {
+    echo "$(date +"%Y-%m-%d %T") - Generating frontend certificate..."
+    openssl genrsa -aes256 -out frontend.key 2048
+    openssl req -new -key frontend.key -out frontend.csr -config certs/conf/frontend.conf
+    openssl x509 -req -in frontend.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out frontend.crt -days 365 -sha256 -extensions v3_ext -extfile certs/conf/frontend.conf
+    openssl pkcs12 -export -out frontend.pfx -inkey frontend.key -in frontend.crt
+    openssl x509 -inform pem -in frontend.crt -outform der -out frontend.cer
 }
 
-function move-ca-files() {
-  mkdir ca
-
-  mv ca-config.json ca/
-  mv ca-csr.json ca/
-  mv ca-key.pem ca/
-  mv ca.csr ca/
-  mv ca.pem ca/
-  mv ca.pfx ca/
+function generate_backend_certificate() {
+    echo "$(date +"%Y-%m-%d %T") - Generating backend certificate..."
+    openssl genrsa -aes256 -out backend.key 2048
+    openssl req -new -key backend.key -out backend.csr -config certs/conf/backend.conf
+    openssl x509 -req -in backend.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out backend.crt -days 365 -sha256 -extensions v3_ext -extfile certs/conf/backend.conf
+    openssl pkcs12 -export -out backend.pfx -inkey backend.key -in backend.crt
+    openssl x509 -inform pem -in backend.crt -outform der -out backend.cer
 }
 
-function generate-certificate() {
-  # $1 - file-name-prefix, i.e., "aspnetcore-k8s"
-  # $2 - CN - such as "*.svc.cluster.local"
-  cat > $1-csr.json <<EOF
-  {
-    "CN": "$2",
-    "key": {
-      "algo": "rsa",
-      "size": 2048
-    },
-    "names": [
-      {
-        "C": "US",
-        "L": "Hartford",
-        "O": "$1",
-        "OU": "$2",
-        "ST": "Wisconsin"
-      }
-    ]
-  }
-EOF
+function move_all() {
+    rm -rf certs/ca/
+    rm -rf certs/backend/
+    rm -rf certs/frontend/
 
-  cfssl gencert \
-    -ca=ca.pem \
-    -ca-key=ca-key.pem \
-    -config=ca-config.json \
-    -hostname="$2" \
-    -profile=kubernetes \
-    $1-csr.json | cfssljson -bare $1
+    mkdir certs/ca
+    mv ca.cer certs/ca/
+    mv ca.crt certs/ca/
+    mv ca.key certs/ca/
+    mv ca.pem certs/ca/
+    mv ca.pfx certs/ca/
+    mv ca.srl certs/ca/
 
-  # Now we need to use the private and public key PEM files to generate a PFX file
-  # Make sure you update your Dockerfile with the appropriate password you are asked to enter for this command!
-  openssl pkcs12 -inkey $1-key.pem -in $1.pem -export -out $1.pfx
+    mkdir certs/frontend
+    mv frontend.cer certs/frontend/
+    mv frontend.crt certs/frontend/
+    mv frontend.csr certs/frontend/
+    mv frontend.key certs/frontend/
+    mv frontend.pfx certs/frontend/
 
-  mkdir $1
-
-  mv $1-csr.json $1/
-  mv $1-key.pem $1/
-  mv $1.csr $1/
-  mv $1.pem $1/
-  mv $1.pfx $1/
+    mkdir certs/backend
+    mv backend.cer certs/backend/
+    mv backend.crt certs/backend/
+    mv backend.csr certs/backend/
+    mv backend.key certs/backend/
+    mv backend.pfx certs/backend/
 }
 
-cd certs/
+echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
-validation
-generate-ca
-generate-certificate $BACKEND_CERT_NAME $KUBERNETES_BACKEND_HOSTNAME
-generate-certificate $FRONTEND_CERT_NAME $FRONTEND_HOSTNAME
-move-ca-files
+generate_ca
+generate_frontend_certificate
+generate_backend_certificate
+move_all
 
-echo "Script completed successfully!"
-cd ..
+echo "$(date +"%Y-%m-%d %T") - Script completed successfully!"
+echo ""
