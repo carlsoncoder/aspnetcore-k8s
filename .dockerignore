@@ -6,7 +6,7 @@
 .git
 .cache
 certs/
-kubernetes/
+deployment/
 
 # files
 Dockerfile*

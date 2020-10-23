@@ -102,7 +102,7 @@ EOF
     -ca=ca.pem \
     -ca-key=ca-key.pem \
     -config=ca-config.json \
-    -hostname=*.svc.cluster.local \
+    -hostname="$2" \
     -profile=kubernetes \
     $1-csr.json | cfssljson -bare $1
 

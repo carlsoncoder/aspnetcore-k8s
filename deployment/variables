@@ -1,0 +1,78 @@
+# Required tags for resource group creation - specify the appropriate values in these 4 parameters
+CREATED_ON='CreatedOn=10/22/2020'
+CREATOR_EMAIL='CreatorEmail=yourEmail@domain.com'
+OWNER='Owner=John Smith'
+OWNER_EMAIL='OwnerEmail=yourEmail@domain.com'
+
+# The name of the Azure subscription where all assets will be deployed
+SUBSCRIPTION_NAME=""
+
+# The region in Azure to deploy to
+AZURE_LOCATION=""
+
+# The name of the resource group to create where we will deploy the cluster itself
+CLUSTER_RESOURCE_GROUP_NAME=""
+
+# The name of the cluster to create
+CLUSTER_NAME=""
+
+# The name of the username to SSH to the nodes themselves
+# Note that this must match the SSH key username as well!
+LINUX_ADMIN_USERNAME=""
+
+# The version of Kubernetes to deploy for your cluster
+KUBERNETES_VERSION="1.18.8"
+
+# The minimum number of nodes you will allow your pool to deploy for scaling
+MIN_NODE_COUNT="2"
+
+# The maximum number of nodes you will allow your pool to deploy for scaling
+MAX_NODE_COUNT="5"
+
+# The name of the default node pool that will be created in the cluster
+NODEPOOL_NAME="linuxpool1"
+
+# The VM type that will be deployed for all the VM's in your node pool (such as "Standard_DS4_v2")
+NODE_VM_SIZE="Standard_DS2_v2"
+
+# The initial number of nodes in the node pool
+NODE_POOL_COUNT="3"
+
+# The Tenant ID for the AzureAD OIDC integration
+AAD_TENANT_ID=""
+
+# Admin AD group ID to assign cluster-admin rights to
+AAD_ADMIN_GROUP_ID=""
+
+# The name of the Application Gateway to create
+APPLICATION_GATEWAY_NAME=""
+
+# The name of the gateway subnet to create
+APPLICATION_GATEWAY_SUBNET_NAME="appGwSubnet"
+
+# The CIDR range for your Gateway Subnet (Must be in the k8s VNET address space (default 10.0.0.0/8!)
+APPLICATION_GATEWAY_SUBNET_CIDR="10.242.0.0/16"
+
+# The private IP address of your Application Gateway - must be part of the gateway subnet defined directly above
+APPLICATION_GATEWAY_PRIVATE_IP_ADDRESS="10.242.0.100"
+
+# The name of your Public IP for your Application Gateway
+APPLICATION_GATEWAY_PUBLIC_IP_NAME=""
+
+# The name of the resource group where your main DNS zone is deployed in your Azure subscription
+DNS_RESOURCE_GROUP=""
+
+# The site name of your DNS Zone
+DNS_ZONE_NAME=""
+
+# The desired hostname for the DNS CNAME record to create (will create a record in the format of "DNS_DESIRED_HOSTNAME.DNS_ZONE_NAME)
+DNS_DESIRED_HOSTNAME=""
+
+# The name of the Azure Identity that will will bind to our cluster, to allow it to update the Application Gateway
+AAD_ARM_IDENTITY_NAME=""
+
+# The password you used to create your private key password on the certificate
+CERTIFICATE_PRIVATE_KEY_PASSWORD=""
+
+# The public key value of the SSH key.  You will need the private key yourself to eventually log into the nodes via SSH
+SSH_PUBLIC_KEY=""
