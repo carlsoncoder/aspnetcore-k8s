@@ -77,10 +77,31 @@ spec:
               fieldPath: metadata.name
         ports:
         - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS            
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
       volumes:
       - name: app-pfx-volume
         secret:
           secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,10 +146,31 @@ spec:
               fieldPath: metadata.name
         ports:
         - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
       volumes:
       - name: app-pfx-volume
         secret:
           secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -173,8 +215,29 @@ spec:
               fieldPath: metadata.name
         ports:
         - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 80
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
       volumes:
       - name: app-pfx-volume
         secret:
           secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
 ---
