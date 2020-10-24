@@ -92,7 +92,7 @@ function create_application_gateway() {
 
     echo "$(date +"%Y-%m-%d %T") - Assigning frontend cert as ssl-cert for application gateway..."
     az network application-gateway ssl-cert create \
-      --name "frontend-tls"
+      --name "frontend-tls" \
       --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" \
       --gateway-name "$APPLICATION_GATEWAY_NAME" \
       --cert-file "certs/frontend.pfx" \

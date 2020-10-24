@@ -7,7 +7,7 @@ certs/backend
 certs/frontend
 
 # TODO: JUSTIN: REMOVE THIS ONE EVENTUALLY!
-deployment/kubernetes-ingress.yaml
+ingress-examples/
 
 # User-specific files
 *.suo

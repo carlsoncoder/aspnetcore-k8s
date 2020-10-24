@@ -1,7 +1,3 @@
-# TODO: JUSTIN
-- Make notes that the wildcard name "*.hostname.com" must be updated in the frontend.conf and backend.conf, and that it must match "backend-hostname" in the ingress.yaml
-- Get the deployment/kubernetes-ingress.yaml all updated and out of .gitignore file, and update README
-
 # How to use this repository
 - Update your certificate config files
    - certs/conf/backend.conf - Set the "DNS.2" value under the "[ alt names ]" section to the wildcard of your externally availavbe DNS entry, such as "*.carlsoncoder.com"
@@ -43,9 +39,5 @@
    - Delete the main Azure resource group
 
 # Other stuff to review for future improvements:
-- Certificate Updates
-   - How is it handled when certificates need to be rotated (frontend, backend CA, backend, AppGW updates via az CLI, kubernetes secret updates, etc.)
-- backend-path-prefix
-   - [https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#backend-path-prefix](https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#backend-path-prefix)
-   - This is for URL routing - for example, if you have a path-based match to "/api", you can re-route it to the "/" path so you don't need to change paths on the backend service
-
+- Update all the /deployment/ingress-examples example YAML files and add some detail (also update README.md and .gitignore files)
+- Certificate Updates - how is it handled when certificates need to be rotated (frontend, backend CA, backend, AppGW updates via az CLI, kubernetes secret updates, etc.)
