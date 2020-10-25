@@ -17,16 +17,14 @@
    - Deploy a public IP address
    - Deploy an application gateway (with root-cert and ssl-cert)
    - Deploy a DNS CNAME record
+   - Create an Azure identity to be used by the AGIC, and assign the appropriate permissions
 - Run the "kubernetes-objects-deploy.sh" script - this will do the following:
    - Deploy a k8s secret with your backend.pfx file
    - Deploy a k8s secret with your private key password value
    - Deploy three separate deployments of the 'sample' image for testing, with different "app-name" values
    - Deploy three separate k8s service objects, all of type ClusterIP, to match up with the above listed deployments
-   - Download a YAML file for the AAD Pod Identity resources and apply it to your cluster
-- Run the "arm-aad-identity-deploy.sh" script - this will do the following:
-   - Create an Azure Managed Identity and assign it the necessary permissions
-- Run the "agic-ingresscontroller-helm-deploy.sh" script - this will do the following:
    - Update your local helm repo
+   - Deploy the AAD Pod Identity helm chart
    - Deploy the Application Gateway Ingress Controller helm chart
 - Ensure that the ingress controller pod is up and running successfully before the next step!
 - Deploy some ingress resources and test it out
@@ -40,4 +38,5 @@
 
 # Other stuff to review for future improvements:
 - Update all the /deployment/ingress-examples example YAML files and add some detail (also update README.md and .gitignore files)
+- Look into the "use-private-ip" annotation (for the private listenter example) - https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#use-private-ip
 - Certificate Updates - how is it handled when certificates need to be rotated (frontend, backend CA, backend, AppGW updates via az CLI, kubernetes secret updates, etc.)
