@@ -3,7 +3,6 @@ namespace aspnetcore_k8s
     using System;
     using Microsoft.AspNetCore.Http;
 
-
     public class PodInfo
     {
         #region Constructors

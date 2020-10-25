@@ -1,7 +1,20 @@
 #!/bin/bash
 
+# Set later in the script
+SUBSCRIPTION_ID=""
+
 function load_variables() {
     export $(grep -v '#.*' variables | xargs)
+}
+
+function login() {  
+    # Load the subscription ID and immediately strip off the first and last quote from the JSON response
+    echo "$(date +"%Y-%m-%d %T") - Loading subscription ID and setting active subscription..."
+    SUBSCRIPTION_ID=$(az account show --subscription "$SUBSCRIPTION_NAME" --query 'id' -o json)
+    SUBSCRIPTION_ID=${SUBSCRIPTION_ID:1:-1}
+
+    # Set the active subscription (assumes you're already logged in, if not, run az login before running the script)
+    az account set --subscription "$SUBSCRIPTION_ID"
 }
 
 function add_update_helm_repos() {
@@ -60,6 +73,7 @@ function apply_kubernetes_objects() {
 echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
 load_variables
+login
 add_update_helm_repos
 install_aad_pod_identity_helm_chart
 install_agic_helm_chart

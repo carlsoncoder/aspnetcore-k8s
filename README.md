@@ -26,8 +26,14 @@
    - Update your local helm repo
    - Deploy the AAD Pod Identity helm chart
    - Deploy the Application Gateway Ingress Controller helm chart
-- Ensure that the ingress controller pod is up and running successfully before the next step!
-- Deploy some ingress resources and test it out
+- Ensure that the ingress controller pod is up and running successfully before the next step - You can do that with the following commands:
+```
+# Get the name of the pod
+kubectl get pods | grep ingress-azure
+# Use it to see the logs
+kubectl logs POD_NAME_FROM_ABOVE
+```
+- Deploy some ingress resources and test it out!
 
 # Deleting all resources when you're done
 - Ensure all values in the deployment/variables file are correct
