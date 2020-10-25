@@ -10,19 +10,16 @@
    - backend.pfx
    - frontend.pfx
 - Manually assign the ca.crt file as a trusted root on the machine you'll be accessing the gateway from
-- Manually update the "SSH_PUBLIC_KEY" parameter at the top of the "aks-cluster-deploy.sh" script
-- Run the "aks-cluster-deploy.sh" script - this will do the following:
+- Manually update the "SSH_PUBLIC_KEY" parameter at the top of the "deployment/deploy-all.sh" script
+- Run the "deployment/deploy-all.sh" script - this will do the following:
    - Deploy a resource group
    - Deploy an AKS cluster
    - Deploy a public IP address
    - Deploy an application gateway (with root-cert and ssl-cert)
    - Deploy a DNS CNAME record
    - Create an Azure identity to be used by the AGIC, and assign the appropriate permissions
-- Run the "kubernetes-objects-deploy.sh" script - this will do the following:
    - Deploy a k8s secret with your backend.pfx file
    - Deploy a k8s secret with your private key password value
-   - Deploy three separate deployments of the 'sample' image for testing, with different "app-name" values
-   - Deploy three separate k8s service objects, all of type ClusterIP, to match up with the above listed deployments
    - Update your local helm repo
    - Deploy the AAD Pod Identity helm chart
    - Deploy the Application Gateway Ingress Controller helm chart
@@ -33,14 +30,17 @@ kubectl get pods | grep ingress-azure
 # Use it to see the logs
 kubectl logs POD_NAME_FROM_ABOVE
 ```
-- Deploy some ingress resources and test it out!
+- Deploy the Kubernetes Deployment/Service objects
+```
+kubectl apply -f kubernetes-definitions.yaml
+```
+- Determine which ingress example you want to deploy (from the deployment/ingress-examples folder) and deploy it
+```
+kubectl apply -f ingress-examples/name-of-file.yaml
+```
 
 # Deleting all resources when you're done
-- Ensure all values in the deployment/variables file are correct
-- Run the "delete-all-resources.sh" script - this will do the following:
-   - Delete the DNS CNAME zone record
-   - Delete the auto-generated Kubernetes Azure resource group
-   - Delete the main Azure resource group
+- Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and the DNS CNAME record
 
 # Other stuff to review for future improvements:
 - Update all the /deployment/ingress-examples example YAML files and add some detail (also update README.md and .gitignore files)
