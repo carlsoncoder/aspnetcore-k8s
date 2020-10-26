@@ -10,6 +10,7 @@ namespace aspnetcore_k8s
         public PodInfo(HttpRequest httpRequest)
         {
             this.Timestamp = DateTime.UtcNow;
+            this.Namespace = Environment.GetEnvironmentVariable("NAMESPACE_NAME");
             this.NodeName = Environment.GetEnvironmentVariable("NODE_NAME");
             this.PodName = Environment.GetEnvironmentVariable("POD_NAME");
             this.ApplicationName = Environment.GetEnvironmentVariable("CUSTOM_APPLICATION_NAME");
@@ -23,6 +24,12 @@ namespace aspnetcore_k8s
         #region Properties
 
         public DateTime Timestamp
+        {
+            get;
+            private set;
+        }
+
+        public string Namespace
         {
             get;
             private set;
