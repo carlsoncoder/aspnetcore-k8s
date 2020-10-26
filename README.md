@@ -1,10 +1,10 @@
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
+- Copy your public SSH key to the deployment directory, and rename the file to "ssh.pub"
 - Generate your certificates for the sample application by running the deployment/certs/create-certificates.sh script
    - Make sure to use the same password for all private key values!
    - Update the "CERTIFICATE_PRIVATE_KEY_PASSWORD" parameter in the variables file with the password you used
 - Manually assign the ca.crt file as a trusted root on the machine you'll be accessing the gateway from
-- Manually update the "SSH_PUBLIC_KEY" parameter at the top of the "deployment/deploy-all.sh" script
 - Run the "deployment/deploy-all.sh" script - this will do the following:
    - Deploy a resource group
    - Deploy an AKS cluster

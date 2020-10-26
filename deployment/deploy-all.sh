@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# The public key value of the SSH key.  You will need the private key yourself to eventually log into the nodes via SSH
-# YOU MUST SET THIS VALUE APPROPRIATELY!
-SSH_PUBLIC_KEY=""
-
-# DO NOT MODIFY anything past this line!
-
 # Set later in the script
 SUBSCRIPTION_ID=""
+SSH_PUBLIC_KEY=""
 KUBERNETES_GENERATED_RESOURCE_GROUP_NAME=""
 KUBERNETES_VNET_NAME=""
 APPLICATION_GATEWAY_ID=""
@@ -17,6 +12,7 @@ IDENTITY_ID=""
 
 function load_variables() {
     export $(grep -v '#.*' variables | xargs)
+    SSH_PUBLIC_KEY=$(<ssh.pub)
 }
 
 function login() {  
