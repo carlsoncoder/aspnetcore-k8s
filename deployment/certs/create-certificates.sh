@@ -43,6 +43,7 @@ function generate_certificate() {
     cp "conf/$FILE_PREFIX.conf" $CONF_TEMP_FILE_NAME
 
     # Update the wildcard hostname in the temp file
+    # Note - This "sed" command may fail on some OSX systems, but *should* work on *nix systems
     sed -i "" "s/${DEFAULT_WILDCARD_HOSTNAME}/${WILDCARD_HOST_NAME}/" $CONF_TEMP_FILE_NAME
 
     openssl genrsa -aes256 -out $FILE_PREFIX.key 2048

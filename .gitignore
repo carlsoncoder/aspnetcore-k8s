@@ -6,9 +6,6 @@ deployment/certs/ca
 deployment/certs/backend
 deployment/certs/frontend
 
-# TODO: JUSTIN: REMOVE THIS ONE EVENTUALLY!
-ingress-examples/
-
 # User-specific files
 *.suo
 *.user

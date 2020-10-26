@@ -253,3 +253,34 @@ spec:
           secretName: backend-wildcard-pfx
       terminationGracePeriodSeconds: 101
 ---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: multiple-service-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/connection-draining: "true"
+    appgw.ingress.kubernetes.io/connection-draining-timeout: "60"
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "frontend-tls"
+    appgw.ingress.kubernetes.io/backend-protocol: "https"
+    appgw.ingress.kubernetes.io/backend-hostname: "test.carlsoncoder.com"
+    appgw.ingress.kubernetes.io/appgw-trusted-root-certificate: "backend-ca-tls"
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+spec:
+  rules:
+    - host: test.carlsoncoder.com
+      http:
+        paths:
+        - path: /root/*
+          backend:
+            serviceName: aspnetcore-k8s-service-root
+            servicePort: 443
+        - path: /api/*
+          backend:
+            serviceName: aspnetcore-k8s-service-api
+            servicePort: 443
+        - path: /calc/*
+          backend:
+            serviceName: aspnetcore-k8s-service-calc
+            servicePort: 443

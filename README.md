@@ -24,19 +24,13 @@ kubectl get pods | grep ingress-azure
 # Use it to see the logs
 kubectl logs POD_NAME_FROM_ABOVE
 ```
-- Deploy the Kubernetes Deployment/Service objects
-```
-kubectl apply -f kubernetes-definitions.yaml
-```
-- Determine which ingress example you want to deploy (from the deployment/ingress-examples folder) and deploy it
-```
-kubectl apply -f ingress-examples/name-of-file.yaml
-```
+- Deploy an ingress example by running the deployment/ingress-examples/deploy-ingress-example.sh script
+   - This will prompt you for an ingress example to deploy, and then deploy the Service, Deployment, and Ingress objects into Kubernetes
+
 
 # Deleting all resources when you're done
 - Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and the DNS CNAME record
 
 # Other stuff to review for future improvements:
-- Update all the /deployment/ingress-examples example YAML files and add some detail (also update README.md and .gitignore files)
 - Look into the "use-private-ip" annotation (for the private listenter example) - https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#use-private-ip
 - Certificate Updates - how is it handled when certificates need to be rotated (frontend, backend CA, backend, AppGW updates via az CLI, kubernetes secret updates, etc.)
