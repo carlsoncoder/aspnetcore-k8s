@@ -188,7 +188,7 @@ function create_kubernetes_namespace() {
 function create_kubernetes_secrets() {
     # $1 = Tenant code (such as abcd1234)
     echo "$(date +"%Y-%m-%d %T") - Creating kubernetes secrets..."
-    kubectl -n "$1" create secret generic backend-wildcard-pfx --from-file="certs/backend/backend.pfx"
+    kubectl -n "$1" create secret generic backend-wildcard-pfx --from-file="../certs/backend/backend.pfx"
     kubectl -n "$1" create secret generic backend-wildcard-pfx-password --from-literal=password="$CERTIFICATE_PRIVATE_KEY_PASSWORD"
 }
 
