@@ -1,3 +1,6 @@
+# TODO
+- The main deploy script (deploy-all.sh) shouldn't create DNS records or the k8s secrets - the "deploy-ingress-examples.sh" should take care of that
+
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
 - Generate your certificates for the sample application by running the deployment/certs/create-certificates.sh script
