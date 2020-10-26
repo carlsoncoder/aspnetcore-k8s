@@ -1,25 +1,19 @@
 # How to use this repository
-- Update your certificate config files
-   - certs/conf/backend.conf - Set the "DNS.2" value under the "[ alt names ]" section to the wildcard of your externally availavbe DNS entry, such as "*.carlsoncoder.com"
-   - certs/conf/frontend.conf - Set the "DNS.2" value under the "[ alt names ]" section to the wildcard of your externally availavbe DNS entry, such as "*.carlsoncoder.com"
-- Generate your certificates for the sample application by running create-certificates.sh
-   - Use the same password for all private key values!
 - Update all values in the deployment/variables file as necesary
-- In the directory you plan to run the scripts, create a "certs" directory, and copy the following certificate files there:
-   - ca.crt
-   - backend.pfx
-   - frontend.pfx
+- Generate your certificates for the sample application by running the deployment/certs/create-certificates.sh script
+   - Make sure to use the same password for all private key values!
+   - Update the "CERTIFICATE_PRIVATE_KEY_PASSWORD" parameter in the variables file with the password you used
 - Manually assign the ca.crt file as a trusted root on the machine you'll be accessing the gateway from
 - Manually update the "SSH_PUBLIC_KEY" parameter at the top of the "deployment/deploy-all.sh" script
 - Run the "deployment/deploy-all.sh" script - this will do the following:
    - Deploy a resource group
    - Deploy an AKS cluster
    - Deploy a public IP address
-   - Deploy an application gateway (with root-cert and ssl-cert)
+   - Deploy an application gateway (with root-cert (certs/ca/ca.crt) and ssl-cert (certs/frontend/frontend.pfx) set)
    - Deploy a DNS CNAME record
    - Create an Azure identity to be used by the AGIC, and assign the appropriate permissions
-   - Deploy a k8s secret with your backend.pfx file
-   - Deploy a k8s secret with your private key password value
+   - Deploy a k8s secret with your certs/backend/backend.pfx file
+   - Deploy a k8s secret with your private key password value for the certs/backend/backend.pfx certificate
    - Update your local helm repo
    - Deploy the AAD Pod Identity helm chart
    - Deploy the Application Gateway Ingress Controller helm chart

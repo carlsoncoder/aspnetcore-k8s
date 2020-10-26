@@ -101,14 +101,14 @@ function create_application_gateway() {
       --name "backend-ca-tls" \
       --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" \
       --gateway-name "$APPLICATION_GATEWAY_NAME" \
-      --cert-file "certs/ca.crt"
+      --cert-file "certs/ca/ca.crt"
 
     echo "$(date +"%Y-%m-%d %T") - Assigning frontend cert as ssl-cert for application gateway..."
     az network application-gateway ssl-cert create \
       --name "frontend-tls" \
       --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" \
       --gateway-name "$APPLICATION_GATEWAY_NAME" \
-      --cert-file "certs/frontend.pfx" \
+      --cert-file "certs/frontend/frontend.pfx" \
       --cert-password "$CERTIFICATE_PRIVATE_KEY_PASSWORD"
 
     # Load some parameters that we'll use in other sections of the script
@@ -207,7 +207,7 @@ function install_agic_helm_chart() {
 }
 
 function create_kubernetes_secrets() {
-    kubectl -n default create secret generic backend-wildcard-pfx --from-file="certs/backend.pfx"
+    kubectl -n default create secret generic backend-wildcard-pfx --from-file="certs/backend/backend.pfx"
     kubectl -n default create secret generic backend-wildcard-pfx-password --from-literal=password="$CERTIFICATE_PRIVATE_KEY_PASSWORD"
 }
 

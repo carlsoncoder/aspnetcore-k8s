@@ -5,7 +5,6 @@
 **/*.user
 .git
 .cache
-certs/
 deployment/
 
 # files
