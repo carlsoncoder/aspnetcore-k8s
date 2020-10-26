@@ -44,7 +44,7 @@ function deploy_ingress_example() {
 
         5)
             echo "$(date +"%Y-%m-%d %T") - Deploying single-tenant, multiple backend, SINGLE hostname (routing at path level) example..."
-            INGRESS_YAML_FILE="single-tenant-multi-backend-single-hostname.yaml"
+            INGRESS_YAML_FILE="single-tenant-multi-backend-single-hostname-ingress.yaml"
             deploy_single_tenant_single_hostname_example $INGRESS_YAML_FILE
             ;;
 
