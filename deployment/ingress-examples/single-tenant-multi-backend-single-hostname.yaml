@@ -1,0 +1,553 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_1-aspnetcore-k8s-service-root
+spec:
+  selector:
+    app: TENANT_1-aspnetcore-k8s-root
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_1-aspnetcore-k8s-service-api
+spec:
+  selector:
+    app: TENANT_1-aspnetcore-k8s-api
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_1-aspnetcore-k8s-service-calc
+spec:
+  selector:
+    app: TENANT_1-aspnetcore-k8s-calc
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_1-aspnetcore-k8s-deployment-root
+  labels:
+    app: TENANT_1-aspnetcore-k8s-root
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_1-aspnetcore-k8s-root
+  template:
+    metadata:
+      labels:
+        app: TENANT_1-aspnetcore-k8s-root
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-root-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_1-app-root"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS            
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_1-aspnetcore-k8s-deployment-api
+  labels:
+    app: TENANT_1-aspnetcore-k8s-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_1-aspnetcore-k8s-api
+  template:
+    metadata:
+      labels:
+        app: TENANT_1-aspnetcore-k8s-api
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-api-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_1-app-api"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_1-aspnetcore-k8s-deployment-calc
+  labels:
+    app: TENANT_1-aspnetcore-k8s-calc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_1-aspnetcore-k8s-calc
+  template:
+    metadata:
+      labels:
+        app: TENANT_1-aspnetcore-k8s-calc
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-calc-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_1-app-calc"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 80
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_2-aspnetcore-k8s-service-root
+spec:
+  selector:
+    app: TENANT_2-aspnetcore-k8s-root
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_2-aspnetcore-k8s-service-api
+spec:
+  selector:
+    app: TENANT_2-aspnetcore-k8s-api
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: TENANT_2-aspnetcore-k8s-service-calc
+spec:
+  selector:
+    app: TENANT_2-aspnetcore-k8s-calc
+  ports:
+    - protocol: TCP
+      port: 443
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_2-aspnetcore-k8s-deployment-root
+  labels:
+    app: TENANT_2-aspnetcore-k8s-root
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_2-aspnetcore-k8s-root
+  template:
+    metadata:
+      labels:
+        app: TENANT_2-aspnetcore-k8s-root
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-root-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_2-app-root"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS            
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_2-aspnetcore-k8s-deployment-api
+  labels:
+    app: TENANT_2-aspnetcore-k8s-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_2-aspnetcore-k8s-api
+  template:
+    metadata:
+      labels:
+        app: TENANT_2-aspnetcore-k8s-api
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-api-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_2-app-api"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: TENANT_2-aspnetcore-k8s-deployment-calc
+  labels:
+    app: TENANT_2-aspnetcore-k8s-calc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: TENANT_2-aspnetcore-k8s-calc
+  template:
+    metadata:
+      labels:
+        app: TENANT_2-aspnetcore-k8s-calc
+    spec:
+      containers:
+      - image: carlsoncoder/aspnetcore-k8s:v5
+        name: aspnetcore-k8s-calc-main
+        volumeMounts:
+          - mountPath: "/etc/app/pfx"
+            name: app-pfx-volume
+            readOnly: true
+        env:
+        - name: CUSTOM_APPLICATION_NAME
+          value: "TENANT_2-app-calc"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Path
+          value: "/etc/app/pfx/backend.pfx"
+        - name: ASPNETCORE_Kestrel__Certificates__Default__Password
+          valueFrom:
+            secretKeyRef:
+              name: backend-wildcard-pfx-password
+              key: password
+        - name: NAMESPACE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 80
+          periodSeconds: 5
+          timeoutSeconds: 5
+          initialDelaySeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /healthz
+            port: 443
+          periodSeconds: 5
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "90"]
+      volumes:
+      - name: app-pfx-volume
+        secret:
+          secretName: backend-wildcard-pfx
+      terminationGracePeriodSeconds: 101
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: multiple-service-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/connection-draining: "true"
+    appgw.ingress.kubernetes.io/connection-draining-timeout: "60"
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: "frontend-tls"
+    appgw.ingress.kubernetes.io/backend-protocol: "https"
+    appgw.ingress.kubernetes.io/backend-hostname: "test.carlsoncoder.com"
+    appgw.ingress.kubernetes.io/appgw-trusted-root-certificate: "backend-ca-tls"
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+spec:
+  rules:
+    - host: test.carlsoncoder.com
+      http:
+        paths:
+        - path: /TENANT_1/root/*
+          backend:
+            serviceName: TENANT_1-aspnetcore-k8s-service-root
+            servicePort: 443
+        - path: /TENANT_1/api/*
+          backend:
+            serviceName: TENANT_1-aspnetcore-k8s-service-api
+            servicePort: 443
+        - path: /TENANT_1/calc/*
+          backend:
+            serviceName: TENANT_1-aspnetcore-k8s-service-calc
+            servicePort: 443
+        - path: /TENANT_2/root/*
+          backend:
+            serviceName: TENANT_2-aspnetcore-k8s-service-root
+            servicePort: 443
+        - path: /TENANT_2/api/*
+          backend:
+            serviceName: TENANT_2-aspnetcore-k8s-service-api
+            servicePort: 443
+        - path: /TENANT_2/calc/*
+          backend:
+            serviceName: TENANT_2-aspnetcore-k8s-service-calc
+            servicePort: 443

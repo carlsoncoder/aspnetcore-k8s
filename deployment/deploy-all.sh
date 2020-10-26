@@ -119,23 +119,6 @@ function create_application_gateway() {
     APPLICATION_GATEWAY_PUBLIC_IP_FQDN=${APPLICATION_GATEWAY_PUBLIC_IP_FQDN:1:-1}
 }
 
-function create_dns_record() {
-    echo "$(date +"%Y-%m-%d %T") - Creating empty CNAME DNS Record Set..."
-    az network dns record-set cname create \
-      --resource-group "$DNS_RESOURCE_GROUP" \
-      --name "$DNS_DESIRED_HOSTNAME" \
-      --zone-name "$DNS_ZONE_NAME" \
-      --ttl 3600
-
-    echo "$(date +"%Y-%m-%d %T") - Assigning alias value to CNAME DNS Record Set..."
-    az network dns record-set cname set-record \
-      --resource-group "$DNS_RESOURCE_GROUP" \
-      --record-set-name "$DNS_DESIRED_HOSTNAME" \
-      --zone "$DNS_ZONE_NAME" \
-      --cname "$APPLICATION_GATEWAY_PUBLIC_IP_FQDN" \
-      --ttl 3600
-}
-
 function create_arm_identity_and_assign_permissions() {
     echo "$(date +"%Y-%m-%d %T") - Creating AAD ARM Azure Identity for Application Gateway..."
     az identity create --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME"
@@ -206,11 +189,6 @@ function install_agic_helm_chart() {
       --version 1.2.1    
 }
 
-function create_kubernetes_secrets() {
-    kubectl -n default create secret generic backend-wildcard-pfx --from-file="certs/backend/backend.pfx"
-    kubectl -n default create secret generic backend-wildcard-pfx-password --from-literal=password="$CERTIFICATE_PRIVATE_KEY_PASSWORD"
-}
-
 echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
 load_variables
@@ -218,11 +196,9 @@ login
 create_cluster
 create_application_gateway
 create_arm_identity_and_assign_permissions
-create_dns_record
 add_update_helm_repos
 install_aad_pod_identity_helm_chart
 install_agic_helm_chart
-create_kubernetes_secrets
 
 echo "$(date +"%Y-%m-%d %T") - Script completed successfully!"
 echo ""

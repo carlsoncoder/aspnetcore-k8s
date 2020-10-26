@@ -1,6 +1,3 @@
-# TODO
-- The main deploy script (deploy-all.sh) shouldn't create DNS records or the k8s secrets - the "deploy-ingress-examples.sh" should take care of that
-
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
 - Generate your certificates for the sample application by running the deployment/certs/create-certificates.sh script
@@ -13,10 +10,7 @@
    - Deploy an AKS cluster
    - Deploy a public IP address
    - Deploy an application gateway (with root-cert (certs/ca/ca.crt) and ssl-cert (certs/frontend/frontend.pfx) set)
-   - Deploy a DNS CNAME record
    - Create an Azure identity to be used by the AGIC, and assign the appropriate permissions
-   - Deploy a k8s secret with your certs/backend/backend.pfx file
-   - Deploy a k8s secret with your private key password value for the certs/backend/backend.pfx certificate
    - Update your local helm repo
    - Deploy the AAD Pod Identity helm chart
    - Deploy the Application Gateway Ingress Controller helm chart
@@ -28,12 +22,14 @@ kubectl get pods | grep ingress-azure
 kubectl logs POD_NAME_FROM_ABOVE
 ```
 - Deploy an ingress example by running the deployment/ingress-examples/deploy-ingress-example.sh script
-   - This will prompt you for an ingress example to deploy, and then deploy the Service, Deployment, and Ingress objects into Kubernetes
-
+   - This will prompt you for an ingress example to deploy
+   - It will deploy one or more DNS CNAME records, based on the example chosen
+   - It will also deploy the kubernes Secret, Service, Deployment, and Ingress objects, based on the example chosen
 
 # Deleting all resources when you're done
-- Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and any DNS CNAME records you created (one is always created for the "main" deployment, but you may have multiple created if you do the "single tenant" ingress examples)
+- Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and any DNS CNAME records that were created as part of your ingress example chosen
 
 # Other stuff to review for future improvements:
-- Look into the "use-private-ip" annotation (for the private listenter example) - https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#use-private-ip
-- Certificate Updates - how is it handled when certificates need to be rotated (frontend, backend CA, backend, AppGW updates via az CLI, kubernetes secret updates, etc.)
+- "use-private-ip"
+   - Look into the "use-private-ip" annotation (for the private listenter example) [here](https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#use-private-ip)
+- Certificate Updates - how is it handled when certificates need to be rotated (AppGW (ssl-cert and root-cert), and Kubernetes (backend.pfx))
