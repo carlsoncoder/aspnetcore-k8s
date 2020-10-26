@@ -29,7 +29,7 @@ kubectl logs POD_NAME_FROM_ABOVE
 
 
 # Deleting all resources when you're done
-- Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and the DNS CNAME record
+- Delete the main resource group ($CLUSTER_RESOURCE_GROUP_NAME), the auto-generated resource group (Starting with "MC_"), and any DNS CNAME records you created (one is always created for the "main" deployment, but you may have multiple created if you do the "single tenant" ingress examples)
 
 # Other stuff to review for future improvements:
 - Look into the "use-private-ip" annotation (for the private listenter example) - https://github.com/Azure/application-gateway-kubernetes-ingress/blob/master/docs/annotations.md#use-private-ip
