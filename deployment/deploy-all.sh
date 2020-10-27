@@ -40,6 +40,10 @@ function create_cluster() {
       --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" \
       --admin-username "$LINUX_ADMIN_USERNAME" \
       --enable-cluster-autoscaler \
+      --enable-managed-identity \
+      --enable-aad \
+      --aad-tenant-id "$AAD_TENANT_ID" \
+      --aad-admin-group-object-ids "$AAD_ADMIN_GROUP_ID" \
       --kubernetes-version "$KUBERNETES_VERSION" \
       --load-balancer-sku "Standard" \
       --location "$AZURE_LOCATION" \
@@ -50,6 +54,7 @@ function create_cluster() {
       --network-policy "azure" \
       --node-vm-size "$NODE_VM_SIZE" \
       --nodepool-name "$NODEPOOL_NAME" \
+      --no-ssh-key \
       --ssh-key-value "$SSH_PUBLIC_KEY"
 
     # Get the credentials so we can call operations on the cluster with kubectl
