@@ -2,6 +2,10 @@
 - JUSTIN: Add something to the deploy-all.sh script that will force the user to login (like "kubectl get nodes" for example)
    - This will load up the .kubeconfig appropriately.
    - Should probably do this right before any of the "helm" calls (i.e., before the "add_update_helm_repos" function is called)
+- This is going to fail after enabling MSI (--enable-managed-identity) (see create_arm_identity_and_assign_permissions function)
+   - "az aks show --resource-group "rg-name" --name "cluster-name" -o tsv --query "servicePrincipalProfile.clientId""
+   - Before, this used to return an actual objectID, now it returns "msi" - NEED TO FIGURE THIS OUT
+
 
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
