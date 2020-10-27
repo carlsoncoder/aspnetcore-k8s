@@ -1,3 +1,8 @@
+# TODO
+- JUSTIN: Add something to the deploy-all.sh script that will force the user to login (like "kubectl get nodes" for example)
+   - This will load up the .kubeconfig appropriately.
+   - Should probably do this right before any of the "helm" calls (i.e., before the "add_update_helm_repos" function is called)
+
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
 - Copy your public SSH key to the deployment directory, and rename the file to "ssh.pub"
