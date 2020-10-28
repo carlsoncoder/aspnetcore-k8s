@@ -58,11 +58,15 @@ function create_cluster() {
       --ssh-key-value "$SSH_PUBLIC_KEY"
 
     # Get the credentials so we can call operations on the cluster with kubectl
-    echo "$(date +"%Y-%m-%d %T") - Setting Kubernetes cluster credentials..."
+    echo "$(date +"%Y-%m-%d %T") - Setting up .kubeconfig file..."
     az aks get-credentials \
       --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" \
       --name "$CLUSTER_NAME" \
       --overwrite-existing
+
+    # Force the user to login to AAD by making a call to the kube-apiserver, otherwise later commands will fail
+    echo "$(date +"%Y-%m-%d %T") - Setting Kubernetes cluster credentials via AAD login..."
+    kubectl get nodes
 
     # Load some parameters that we'll use in other sections of the script
     KUBERNETES_GENERATED_RESOURCE_GROUP_NAME=$(az aks show --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" --name "$CLUSTER_NAME" --query nodeResourceGroup -o tsv)
@@ -145,7 +149,9 @@ function create_arm_identity_and_assign_permissions() {
       --scope "$SCOPES"
 
     echo "$(date +"%Y-%m-%d %T") - Assigning permissions to AAD identity for Managed Identity Operator..."
-    CLUSTER_CLIENT_ID=$(az aks show --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" --name "$CLUSTER_NAME" -o tsv --query "servicePrincipalProfile.clientId")
+    # NOTE: If you are NOT using managed identities for your AKS cluster (i.e., if you omit the "--enable-managed-identity" flag when calling az aks create), 
+    # You would need to set the --query flag here to [--query "servicePrincipalProfile.clientId] instead!)
+    CLUSTER_CLIENT_ID=$(az aks show --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" --name "$CLUSTER_NAME" -o tsv --query "identity.principalId")
     
     az role assignment create \
       --role "Managed Identity Operator" \
