@@ -44,6 +44,7 @@ function create_cluster() {
       --enable-aad \
       --aad-tenant-id "$AAD_TENANT_ID" \
       --aad-admin-group-object-ids "$AAD_ADMIN_GROUP_ID" \
+      --dns-name-prefix "$CLUSTER_NAME" \
       --kubernetes-version "$KUBERNETES_VERSION" \
       --load-balancer-sku "Standard" \
       --location "$AZURE_LOCATION" \

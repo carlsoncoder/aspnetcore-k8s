@@ -1,3 +1,6 @@
+# TODO:
+   - Test out the application gateway with a 'private' cluster
+
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
 - Copy your public SSH key to the deployment directory, and rename the file to "ssh.pub"
