@@ -70,7 +70,7 @@ function deploy_management_subnet() {
 }
 
 function deploy_application_gateway() {
-echo "$(date +"%Y-%m-%d %T") - Creating public IP address for Application Gateway..."
+    echo "$(date +"%Y-%m-%d %T") - Creating public IP address for Application Gateway..."
     az network public-ip create \
       --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" \
       --name "$APPLICATION_GATEWAY_PUBLIC_IP_NAME" \
