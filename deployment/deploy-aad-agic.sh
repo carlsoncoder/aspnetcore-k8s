@@ -2,17 +2,9 @@
 
 # Set later in the script
 SUBSCRIPTION_ID=""
-IDENTITY_CLIENT_ID=""
-IDENTITY_ID=""
-APPGW_SUBNET_ID=""
 
 function load_variables() {
     export $(grep -v '#.*' variables | xargs)
-
-    IDENTITY_CLIENT_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "clientId")
-    IDENTITY_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "id")
-
-    APPGW_SUBNET_ID=$(az network vnet subnet show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --vnet-name "$MAIN_VNET_NAME" --name "$APPLICATION_GATEWAY_SUBNET_NAME" --query 'id' -o tsv)
 }
 
 function login() {  
@@ -60,12 +52,17 @@ function install_aad_pod_identity_helm_chart() {
 function install_agic_helm_chart() {
     echo "$(date +"%Y-%m-%d %T") - Installing ingress-azure helm chart at version 1.2.1..."    
 
+    # Load necessary values from the az CLI
+    IDENTITY_CLIENT_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "clientId")
+    IDENTITY_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "id")
+    APPLICATION_GATEWAY_SUBNET_ID=$(az network vnet subnet show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --vnet-name "$MAIN_VNET_NAME" --name "$APPLICATION_GATEWAY_SUBNET_NAME" --query 'id' -o tsv)
+
     helm install ingress-azure application-gateway-kubernetes-ingress/ingress-azure \
       --namespace default \
       --debug \
       --set appgw.name="$APPLICATION_GATEWAY_NAME" \
       --set appgw.subnetName="$APPLICATION_GATEWAY_SUBNET_NAME" \
-      --set appgw.subnetID="$APPGW_SUBNET_ID" \
+      --set appgw.subnetID="$APPLICATION_GATEWAY_SUBNET_ID" \
       --set appgw.resourceGroup="$INFRASTRUCTURE_RESOURCE_GROUP_NAME" \
       --set appgw.subscriptionId="$SUBSCRIPTION_ID" \
       --set appgw.usePrivateIP=false \
@@ -74,7 +71,7 @@ function install_agic_helm_chart() {
       --set armAuth.identityResourceID="$IDENTITY_ID" \
       --set armAuth.identityClientID="$IDENTITY_CLIENT_ID" \
       --set rbac.enabled=true \
-      --set verbosityLevel=9 \
+      --set verbosityLevel=3 \
       --set kubernetes.watchNamespace="" \
       --version 1.2.1
 }
