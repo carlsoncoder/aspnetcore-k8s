@@ -5,7 +5,7 @@
 deployment/certs/ca
 deployment/certs/backend
 deployment/certs/frontend
-deployment/ssh.pub
+deployment/keys
 
 # User-specific files
 *.suo

@@ -159,9 +159,7 @@ create_deploy_tenant_resources() {
 
 function create_dns_record() {
     # $1 = Tenant code (such as "abcd1234"), or application name (such as "calc1" (as in calc1.domain.com))
-    KUBERNETES_GENERATED_RESOURCE_GROUP_NAME=$(az aks show --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" --name "$CLUSTER_NAME" --query nodeResourceGroup -o tsv)
-    APPLICATION_GATEWAY_PUBLIC_IP_FQDN=$(az network public-ip show --resource-group "$KUBERNETES_GENERATED_RESOURCE_GROUP_NAME" --name "$APPLICATION_GATEWAY_PUBLIC_IP_NAME" -o json --query dnsSettings.fqdn)
-    APPLICATION_GATEWAY_PUBLIC_IP_FQDN=${APPLICATION_GATEWAY_PUBLIC_IP_FQDN:1:-1}
+    APPLICATION_GATEWAY_PUBLIC_IP_FQDN=$(az network public-ip show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$APPLICATION_GATEWAY_PUBLIC_IP_NAME" -o tsv --query dnsSettings.fqdn)
 
     echo "$(date +"%Y-%m-%d %T") - Creating empty CNAME DNS Record Set..."
     az network dns record-set cname create \
