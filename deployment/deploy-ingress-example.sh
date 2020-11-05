@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function load_variables() {
-    export $(grep -v '#.*' ../variables | xargs)
+    export $(grep -v '#.*' variables | xargs)
 }
 
 function deploy_ingress_example() {
