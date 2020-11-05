@@ -43,10 +43,10 @@ kubectl get pods | grep ingress-azure
 # Use it to see the logs
 kubectl logs POD_NAME_FROM_ABOVE
 ```
-- Deploy an ingress example by running the deployment/ingress-examples/deploy-ingress-example.sh script
+- Deploy an ingress example by running the deployment/deploy-ingress-example.sh script
    - This will prompt you for an ingress example to deploy
    - It will deploy one or more DNS CNAME records, based on the example chosen
-   - It will also deploy the kubernes Secret, Service, Deployment, and Ingress objects, based on the example chosen
+   - It will also deploy the kubernes Secret, Service, Deployment, and Ingress objects via local Helm charts, based on the example chosen
 
 
 # Deleting all resources when you're done

@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Values.names.ingress}}
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/connection-draining: "true"
+    appgw.ingress.kubernetes.io/connection-draining-timeout: "60"
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: {{ .Values.ingress.appgwSslCertificateName }}
+    appgw.ingress.kubernetes.io/backend-protocol: "https"
+    appgw.ingress.kubernetes.io/backend-hostname: {{ .Values.ingress.backendHostname }}
+    appgw.ingress.kubernetes.io/appgw-trusted-root-certificate: {{ .Values.ingress.appgwRootCaCertificateName }}
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
+spec:
+  rules:
+    - host: {{ .Values.ingress.listenerHostName }}
+      http:
+        paths:
+        - path: /api/*
+          backend:
+            serviceName: {{ .Values.names.service.api }}
+            servicePort: {{ .Values.service.port }}
+        - path: /calc/*
+          backend:
+            serviceName: {{ .Values.names.service.calc }}
+            servicePort: {{ .Values.service.port }}
+        - path: /web/*
+          backend:
+            serviceName: {{ .Values.names.service.web }}
+            servicePort: {{ .Values.service.port }}

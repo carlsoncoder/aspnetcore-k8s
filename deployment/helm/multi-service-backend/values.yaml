@@ -1,0 +1,37 @@
+deploymentReplicaCount: 2
+terminationGracePeriodSeconds: 101
+
+certificatePassword: "password"
+
+image:
+  repository: carlsoncoder/aspnetcore-k8s
+  tag: v5
+  pullPolicy: IfNotPresent
+
+names:
+  service:
+    api: "aspnetcore-k8s-service-api"
+    web: "aspnetcore-k8s-service-web"
+    calc: "aspnetcore-k8s-service-calc"
+  deployment:
+    api: "aspnetcore-k8s-deployment-api"
+    web: "aspnetcore-k8s-deployment-web"
+    calc: "aspnetcore-k8s-deployment-calc"
+  app:
+    api: "aspnetcore-k8s-api"
+    web: "aspnetcore-k8s-web"
+    calc: "aspnetcore-k8s-calc"
+  secret:
+    certPassword: "backend-wildcard-pfx-password"
+    certPfxFile: "backed-wildcard-pfx-cert"
+  ingress: "multiple-service-ingress"
+
+ingress:
+  appgwSslCertificateName: "frontend-tls"
+  appgwRootCaCertificateName: "backend-ca-tls"
+  backendHostname: "test.carlsoncoder.com"
+  listenerHostName: "test.carlsoncoder.com"
+
+service:
+  type: ClusterIP
+  port: 443
