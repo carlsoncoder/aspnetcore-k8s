@@ -4,6 +4,15 @@ function load_variables() {
     export $(grep -v '#.*' variables | xargs)
 }
 
+function login() {  
+    # Load the subscription ID
+    echo "$(date +"%Y-%m-%d %T") - Loading subscription ID and setting active subscription..."
+    SUBSCRIPTION_ID=$(az account show --subscription "$SUBSCRIPTION_NAME" --query 'id' -o tsv)
+
+    # Set the active subscription (assumes you're already logged in, if not, run az login before running the script)
+    az account set --subscription "$SUBSCRIPTION_ID"
+}
+
 function deploy_ingress_example() {
     echo "Please select an ingress example to deploy:"
     echo "1 - Multi-tenant, with multiple backends"
@@ -51,11 +60,11 @@ function deploy_tenant_resources() {
     # Eventually it would be nice to do the kubernetes namespace creation, and PFX certificate secret creation via helm
     KUBERNETES_NAMESPACE="$1"
     create_kubernetes_namespace "$KUBERNETES_NAMESPACE"
-    create_kubernetes_secrets "$KUBERNETES_NAMESPACE"
+    create_kubernetes_certificate_secret "$KUBERNETES_NAMESPACE"
 
     CHART_NAME="multi-service-backend-$KUBERNETES_NAMESPACE"
 
-    $ORIGINAL_DIR=$(pwd)
+    ORIGINAL_DIR=$(pwd)
     cd helm/
 
     helm install $CHART_NAME \
@@ -67,7 +76,7 @@ function deploy_tenant_resources() {
       --set ingress.backendHostName="$DESIRED_HOST_FQDN" \
       --set ingress.listenerHostName="$DESIRED_HOST_FQDN"
 
-    cd $ORIGINAL_DIR
+    cd "$ORIGINAL_DIR"
 }
 
 function create_dns_record() {
@@ -99,12 +108,13 @@ function create_kubernetes_namespace() {
 function create_kubernetes_certificate_secret() {
     # $1 = Tenant code (such as abcd1234)
     echo "$(date +"%Y-%m-%d %T") - Creating kubernetes secrets..."
-    kubectl -n "$1" create secret generic backend-wildcard-pfx --from-file="../certs/backend/backend.pfx"
+    kubectl -n "$1" create secret generic backend-wildcard-pfx-cert --from-file="certs/backend/backend.pfx"
 }
 
 echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
 load_variables
+login
 deploy_ingress_example
 
 echo "$(date +"%Y-%m-%d %T") - Script completed successfully!"

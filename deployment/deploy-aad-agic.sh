@@ -8,13 +8,8 @@ function load_variables() {
 }
 
 function login() {  
-    echo "$(date +"%Y-%m-%d %T") - Loading subscription ID and setting active subscription..."
-
-    # Login
-    # In a 'real' system you would likely want to provide a service principal to login, as the "az login" command is interactive and cannot be run unattended
-    az login
-
     # Load the subscription ID
+    echo "$(date +"%Y-%m-%d %T") - Loading subscription ID and setting active subscription..."
     SUBSCRIPTION_ID=$(az account show --subscription "$SUBSCRIPTION_NAME" --query 'id' -o tsv)
 
     # Set the active subscription (assumes you're already logged in, if not, run az login before running the script)

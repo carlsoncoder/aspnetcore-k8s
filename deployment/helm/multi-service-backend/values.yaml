@@ -23,13 +23,13 @@ names:
     calc: "aspnetcore-k8s-calc"
   secret:
     certPassword: "backend-wildcard-pfx-password"
-    certPfxFile: "backed-wildcard-pfx-cert"
+    certPfxFile: "backend-wildcard-pfx-cert"
   ingress: "multiple-service-ingress"
 
 ingress:
   appgwSslCertificateName: "frontend-tls"
   appgwRootCaCertificateName: "backend-ca-tls"
-  backendHostname: "test.carlsoncoder.com"
+  backendHostName: "test.carlsoncoder.com"
   listenerHostName: "test.carlsoncoder.com"
 
 service:

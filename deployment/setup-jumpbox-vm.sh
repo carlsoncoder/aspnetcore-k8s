@@ -22,11 +22,17 @@ function install_helm() {
     helm repo update
 }
 
+function az_login() {
+    echo "$(date +"%Y-%m-%d %T") - Validating we can login with 'az login'..."
+    az login
+}
+
 echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
 install_az_cli
 install_kubectl
 install_helm
+az_login
 
 echo "$(date +"%Y-%m-%d %T") - Script completed successfully!"
 echo ""
