@@ -1,3 +1,12 @@
+_NOTE: This repository assumes you'll be using the docker image available on the Docker hub at "carlsoncoder/aspnetcore-k8s:v5".  That image is built off of the current ASP.NET Core code ini this repository.  If you do wish to, you can always build the Docker image yourself and push it to your own container registry.  All you would need to update after that is the following lines in the "deployment/deploy-ingress-example.sh" script file:_
+
+```
+--set image.repository="carlsoncoder/aspnetcore-k8s" \
+--set image.tag="v5" \
+```
+
+_However, please note that the example helm charts DO NOT have any ImagePullSecrets defined in them, so if you wish to use a container registry that requires that, it would require additional manual modification on your part_
+
 # How to use this repository
 - Update all values in the deployment/variables file as necesary
 - Copy your public and private SSH key to the deployment directory, and rename the files to "ssh.pub" and "ssh.key" respectively
