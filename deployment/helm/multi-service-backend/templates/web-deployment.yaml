@@ -19,11 +19,11 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           limits:
-            memory: 1Gi
-            cpu: 500m
+            memory: {{ .Values.resources.limits.memory }}
+            cpu: {{ .Values.resources.limits.cpu }}
           requests:
-            memory: 1Gi
-            cpu: 500m
+            memory: {{ .Values.resources.requests.memory }}
+            cpu: {{ .Values.resources.requests.cpu }}
         name: {{ .Values.names.app.web }}-main
         volumeMounts:
           - mountPath: "/etc/app/pfx"

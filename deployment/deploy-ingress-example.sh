@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set later in the script
+FULL_IMAGE_NAME_NO_TAG=""
+
 function load_variables() {
     export $(grep -v '#.*' variables | xargs)
 }
@@ -11,6 +14,11 @@ function login() {
 
     # Set the active subscription (assumes you're already logged in, if not, run az login before running the script)
     az account set --subscription "$SUBSCRIPTION_ID"
+}
+
+function load_registry() {
+    REGISTRY=$(az acr show --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" --name "$CONTAINER_REGISTRY_NAME" -o tsv --query "loginServer")
+    FULL_IMAGE_NAME_NO_TAG="$REGISTRY/$DOCKER_IMAGE_NAME"
 }
 
 function deploy_ingress_example() {
@@ -70,8 +78,8 @@ function deploy_tenant_resources() {
     helm install $CHART_NAME \
       multi-service-backend/ \
       --namespace "$KUBERNETES_NAMESPACE" \
-      --set image.repository="carlsoncoder/aspnetcore-k8s" \
-      --set image.tag="v5" \
+      --set image.repository="$FULL_IMAGE_NAME_NO_TAG" \
+      --set image.tag="$DOCKER_IMAGE_TAG" \
       --set certificatePassword="$CERTIFICATE_PRIVATE_KEY_PASSWORD" \
       --set ingress.backendHostName="$DESIRED_HOST_FQDN" \
       --set ingress.listenerHostName="$DESIRED_HOST_FQDN"
@@ -115,6 +123,7 @@ echo "$(date +"%Y-%m-%d %T") - Script starting..."
 
 load_variables
 login
+load_registry
 deploy_ingress_example
 
 echo "$(date +"%Y-%m-%d %T") - Script completed successfully!"

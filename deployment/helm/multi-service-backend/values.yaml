@@ -35,3 +35,11 @@ ingress:
 service:
   type: ClusterIP
   port: 443
+
+resources:
+  limits:
+    memory: 1Gi
+    cpu: 500m
+  requests:
+    memory: 1Gi
+    cpu: 500m

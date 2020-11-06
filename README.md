@@ -1,31 +1,24 @@
-_NOTE: This repository assumes you'll be using the docker image available on the Docker hub at "carlsoncoder/aspnetcore-k8s:v5".  That image is built off of the current ASP.NET Core code ini this repository.  If you do wish to, you can always build the Docker image yourself and push it to your own container registry.  All you would need to update after that is the following lines in the "deployment/deploy-ingress-example.sh" script file:_
-
-```
---set image.repository="carlsoncoder/aspnetcore-k8s" \
---set image.tag="v5" \
-```
-
-_However, please note that the example helm charts DO NOT have any ImagePullSecrets defined in them, so if you wish to use a container registry that requires that, it would require additional manual modification on your part_
-
 # How to use this repository
-- Update all values in the deployment/variables file as necesary
-- Copy your public and private SSH key to the deployment directory, and rename the files to "ssh.pub" and "ssh.key" respectively
-- Generate your certificates for the sample application by running the deployment/certs/create-certificates.sh script
+- Update all values in the "deployment/variables" file as necesary
+- Run the "deployment/create-ssh-keys.sh" script to create the public/private keypair
+   - _NOTE: If you already have your own keypair, you can skip this script, and just move your files into the "deployment/keys" folder, named "ssh.pub" and "ssh.key" respectively for the public and private keys_
+- Generate your certificates for the sample application by running the "deployment/certs/create-certificates.sh" script
    - Make sure to use the same password for all private key values!
-   - Update the "CERTIFICATE_PRIVATE_KEY_PASSWORD" parameter in the variables file with the password you used
-- Manually assign the ca.crt file as a trusted root on the machine you'll be accessing the gateway from
+   - Update the "CERTIFICATE_PRIVATE_KEY_PASSWORD" parameter in the "deployment/variables" file with the password you used
+- Manually assign the ca.crt file as a trusted root on the machine you'll be accessing the gateway from (necessary since we are using self-signed certs, otherwise your browser will not trust the certificate)
 - Run the "deployment/deploy-azure-resources.sh" script - this will do the following:
-   - Deploy an infrastructure resource group
-   - Deploy a Network Security Group (into the infrastructure resource group)
-   - Deploy a VNET (into the infrastructure resource group) with an "aks-cluster" subnet
-   - Deploy an 'application gateway' subnet into the VNET
-   - Deploy a 'management' subnet into the VNET
-   - Deploy a public IP address
-   - Deploy an application gateway (with root-cert (certs/ca/ca.crt) and ssl-cert (certs/frontend/frontend.pfx) set)
-   - Deploy a resource group for the AKS cluster
-   - Deploy an AKS cluster into that resource group
-   - Create an Azure identity to be used by the AGIC, and assign all of the necessary Azure RBAC permissions and role assignments
-   - Deploy a Linux jumpbox into the "management" subnet on the VNET
+   - Deploy an infrastructure resource group with the following resources:
+      - Network Security Group
+      - VNET with three separate subnets (aks-subnet, appGWSubnet, management)
+      - Public IP Address (for the Application Gateway)
+      - Application Gateway (v2 SKU) (Also assigns ssl-cert and root-cert)
+      - Linux VM Jumpbox
+      - Managed Identity to use for the AGIC
+   - Deploy a resource group with the following resources:
+      - Azure Container Registry   
+   -  Deploy a cluster resource group with the following resources:
+      - AKS (Azure Kubernetes Service) Cluster
+- Run the "build-push-docker-image.sh" script to build the docker image and push it to your newly created container registry
 - Go into the Azure portal and then to the NSG tied to the jumpbox VM, and assign a new Inbound rule to allow port 22 (SSH) from your IP address
 - Zip up the entire "deployment" directory:
    - tar -czvf deployment.tar.gz deployment/
@@ -62,4 +55,11 @@ kubectl logs POD_NAME_FROM_ABOVE
 - Delete the auto-generated Kubernetes resource group (MC_xxx_xxx)
 - Delete the AKS resource group ($CLUSTER_RESOURCE_GROUP_NAME)
 - Delete the infrastructure resource group ($INFRASTRUCTURE_RESOURCE_GROUP_NAME)
+- Delete the container registry resource group ($CONTAINER_REGISTRY_RESOURCE_GROUP_NAME)
 - Delete any CNAME records that were created as part of your ingress example chosen
+
+
+# TODO - FUTURE
+- Look into seeing if we need to specify "--service-cidr" and "--dns-service-ip" in the "az aks create" command (is a new subnet needed too?)
+- Update the backend certificate generation to use the "kubernetes.domain.com" instead of the wildcard it's using now
+- Add a new helm chart for the single-tenant routing by path name (instead of hostname) example

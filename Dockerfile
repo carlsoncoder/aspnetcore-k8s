@@ -9,7 +9,7 @@ RUN dotnet restore
 # copy everything else and build app
 COPY . .
 WORKDIR /app
-RUN dotnet publish -c Release -o out
+RUN dotnet publish aspnetcore-k8s.csproj -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 as runtime
 WORKDIR /app

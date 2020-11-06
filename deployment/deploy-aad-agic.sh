@@ -50,7 +50,7 @@ function install_agic_helm_chart() {
     # Load necessary values from the az CLI
     IDENTITY_CLIENT_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "clientId")
     IDENTITY_ID=$(az identity show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$AAD_ARM_IDENTITY_NAME" -o tsv --query "id")
-    APPLICATION_GATEWAY_SUBNET_ID=$(az network vnet subnet show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --vnet-name "$MAIN_VNET_NAME" --name "$APPLICATION_GATEWAY_SUBNET_NAME" --query 'id' -o tsv)
+    APPLICATION_GATEWAY_SUBNET_ID=$(az network vnet subnet show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --vnet-name "$MAIN_VNET_NAME" --name "$APPLICATION_GATEWAY_SUBNET_NAME" --query "id" -o tsv)
 
     helm install ingress-azure application-gateway-kubernetes-ingress/ingress-azure \
       --namespace default \

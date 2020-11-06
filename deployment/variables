@@ -44,6 +44,12 @@ AAD_ARM_IDENTITY_NAME=""
 # The name of the Jumpbox VM to deploy
 JUMP_BOX_NAME=""
 
+# The name of the resource group to create to house the container registry
+CONTAINER_REGISTRY_RESOURCE_GROUP_NAME=""
+
+# The name of the Azure Container Registry to create (all lowercase, only letters, 16 characters or less)
+CONTAINER_REGISTRY_NAME=""
+
 #######################################################################
 ### Networking Parameters (VNET, Subnet, Application Gateway) ###
 #######################################################################
@@ -61,7 +67,7 @@ AKS_SUBNET_CIDR="10.240.0.0/16"
 APPLICATION_GATEWAY_SUBNET_NAME="appGwSubnet"
 
 # The CIDR range for the APPLICATION_GATEWAY_SUBNET_NAME subnet to use (MUST BE IN THE "MAIN_VNET_CIDR" ADDRESS SPACE!)
-APPLICATION_GATEWAY_SUBNET_CIDR="10.242.0.0/16"
+APPLICATION_GATEWAY_SUBNET_CIDR="10.242.0.0/24"
 
 # The private IP address of your Application Gateway - must be part of the gateway subnet defined directly above
 APPLICATION_GATEWAY_PRIVATE_IP_ADDRESS="10.242.0.100"
@@ -121,6 +127,12 @@ DNS_DESIRED_HOSTNAME="applicationName"
 #######################################################################
 ### Miscellaneous Parameters ###
 #######################################################################
+
+# The name of the docker image to build/push to the container registry
+DOCKER_IMAGE_NAME="aspnetcore-k8s"
+
+# The version to apply to your image
+DOCKER_IMAGE_TAG="v1"
 
 # The password you used to create your private key password on the certificate
 CERTIFICATE_PRIVATE_KEY_PASSWORD=""

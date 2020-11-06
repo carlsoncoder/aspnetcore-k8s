@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Set later in the script
+ACR_ID=""
 SUBSCRIPTION_ID=""
 SSH_PUBLIC_KEY=""
 APPLICATION_GATEWAY_ID=""
@@ -108,6 +109,24 @@ function deploy_application_gateway() {
     APPLICATION_GATEWAY_ID=$(az network application-gateway show --resource-group "$INFRASTRUCTURE_RESOURCE_GROUP_NAME" --name "$APPLICATION_GATEWAY_NAME" -o tsv --query 'id')
 }
 
+function deploy_container_registry() {
+    echo "$(date +"%Y-%m-%d %T") - Creating container registry resource group..."
+    az group create \
+      --name "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" \
+      --location "$AZURE_LOCATION" \
+      --tags "$CREATED_ON" "$CREATOR_EMAIL" "$OWNER" "$OWNER_EMAIL"
+
+    echo "$(date +"%Y-%m-%d %T") - Creating Azure Container Registry..."
+    az acr create \
+      --name "$CONTAINER_REGISTRY_NAME" \
+      --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" \
+      --sku "Standard" \
+      --admin-enabled \
+      --location "$AZURE_LOCATION"
+
+      ACR_ID=$(az acr show --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" --name "$CONTAINER_REGISTRY_NAME" -o tsv --query "id")
+}
+
 function deploy_aks_cluster() {
     # Create the resource group where we will be applying the cluster
     echo "$(date +"%Y-%m-%d %T") - Creating resource group where cluster will be applied..."
@@ -121,6 +140,7 @@ function deploy_aks_cluster() {
     az aks create \
       --name "$CLUSTER_NAME" \
       --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" \
+      --attach-acr "$ACR_ID" \
       --admin-username "$LINUX_ADMIN_USERNAME" \
       --enable-cluster-autoscaler \
       --enable-managed-identity \
@@ -238,6 +258,7 @@ deploy_main_vnet_with_aks_subnet
 deploy_application_gateway_subnet
 deploy_management_subnet
 deploy_application_gateway
+deploy_container_registry
 deploy_aks_cluster
 deploy_arm_identity_and_assign_permissions
 deploy_jumpbox_vm
