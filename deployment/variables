@@ -92,7 +92,7 @@ AAD_TENANT_ID=""
 AAD_ADMIN_GROUP_ID=""
 
 # The version of Kubernetes to deploy for your cluster
-KUBERNETES_VERSION="1.18.8"
+KUBERNETES_VERSION="1.19.7"
 
 # The initial number of nodes in the node pool
 NODE_POOL_COUNT="3"

@@ -21,8 +21,8 @@ function load_registry() {
     REGISTRY=$(az acr show --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" --name "$CONTAINER_REGISTRY_NAME" -o tsv --query "loginServer")
     FULL_IMAGE_NAME_WITH_REGISTRY="$REGISTRY/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
 
-    USERNAME=$(az acr credential show --name "$CONTAINER_REGISTRY_NAME" -o tsv --query "username")
-    PASSWORD=$(az acr credential show --name "$CONTAINER_REGISTRY_NAME" -o tsv --query "passwords[0].value")
+    USERNAME=$(az acr credential show --name "$CONTAINER_REGISTRY_NAME" --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" -o tsv --query "username")
+    PASSWORD=$(az acr credential show --name "$CONTAINER_REGISTRY_NAME" --resource-group "$CONTAINER_REGISTRY_RESOURCE_GROUP_NAME" -o tsv --query "passwords[0].value")
 
     docker login "$REGISTRY" -u "$USERNAME" -p "$PASSWORD"
 }

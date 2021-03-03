@@ -32,6 +32,9 @@ namespace aspnetcore_k8s.Controllers
         public PodInfo Get()
         {
             var httpRequest = this._context.HttpContext.Request;
+            this._logger.LogError("Error accessing PodInfoController");
+            this._logger.LogWarning("Warning accessing PodInfoController");
+            this._logger.LogInformation("Information about accessing PodInfoController");
             return new PodInfo(httpRequest);
         }
 
