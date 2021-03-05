@@ -85,6 +85,12 @@ MANAGEMENT_SUBNET_CIDR="10.241.0.0/24"
 # The name of the username to SSH to the nodes and/or vm jumpboxes
 LINUX_ADMIN_USERNAME=""
 
+# The name of the windows admin user
+WINDOWS_ADMIN_USERNAME="azureuser"
+
+# The password for the windows admin user
+WINDOWS_ADMIN_PASSWORD="P@sSw0rd123456"
+
 # The Tenant ID for the AzureAD OIDC integration
 AAD_TENANT_ID=""
 
@@ -109,6 +115,12 @@ NODE_VM_SIZE="Standard_DS4_v2"
 # The name of the default node pool that will be created in the cluster
 NODEPOOL_NAME="linuxpool1"
 
+# Whether or not a Windows OS node pool should be deployed to the cluster
+# Set this value to "true" to deploy the windows node pool
+SHOULD_DEPLOY_WINDOWS_NODE_POOL="true"
+
+# The name of the Windows node pool
+WINDOWS_NODEPOOL_NAME="winvms"
 
 #######################################################################
 ### DNS / CNAME Parameters ###

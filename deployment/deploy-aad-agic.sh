@@ -68,6 +68,7 @@ function install_agic_helm_chart() {
       --set rbac.enabled=true \
       --set verbosityLevel=3 \
       --set kubernetes.watchNamespace="" \
+      --set nodeSelector."kubernetes\\.io/os"=linux \
       --version 1.2.1
 }
 

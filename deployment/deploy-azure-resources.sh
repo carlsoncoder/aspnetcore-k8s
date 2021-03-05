@@ -136,7 +136,7 @@ function deploy_aks_cluster() {
       --tags "$CREATED_ON" "$CREATOR_EMAIL" "$OWNER" "$OWNER_EMAIL"
 
     # Create the actual AKS cluster itself
-    echo "$(date +"%Y-%m-%d %T") - Deploying AKS Cluster..."
+    echo "$(date +"%Y-%m-%d %T") - Deploying AKS Cluster..."    
     az aks create \
       --name "$CLUSTER_NAME" \
       --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" \
@@ -161,7 +161,25 @@ function deploy_aks_cluster() {
       --nodepool-name "$NODEPOOL_NAME" \
       --no-ssh-key \
       --ssh-key-value "$SSH_PUBLIC_KEY" \
+      --windows-admin-username "$WINDOWS_ADMIN_USERNAME" \
+      --windows-admin-password "$WINDOWS_ADMIN_PASSWORD" \
       --vnet-subnet-id "$KUBERNETES_NODEPOD_SUBNET_ID"
+
+    if  [ "$SHOULD_DEPLOY_WINDOWS_NODE_POOL" == "true" ]; then
+        echo "$(date +"%Y-%m-%d %T") - Deploying Windows node pool to AKS cluster..."
+        az aks nodepool add \
+          --resource-group "$CLUSTER_RESOURCE_GROUP_NAME" \
+          --cluster-name "$CLUSTER_NAME" \
+          --name "$WINDOWS_NODEPOOL_NAME" \
+          --enable-cluster-autoscaler \
+          --kubernetes-version "$KUBERNETES_VERSION" \
+          --node-count "$NODE_POOL_COUNT" \
+          --min-count "$MIN_NODE_COUNT" \
+          --max-count "$MAX_NODE_COUNT" \
+          --node-vm-size "$NODE_VM_SIZE" \
+          --os-type "Windows" \
+          --vnet-subnet-id "$KUBERNETES_NODEPOD_SUBNET_ID"
+    fi
 
     # When you use managed identities (-enable-managed-identity), AND you are specifying a VNET (--vnet-subnet-id), AND that VNET is in a resource group outside
     # of the auto-generated "MC_xxx_xxx" resource group, you must manually assign permimssions to the generated managed service identity, to that resource group

@@ -77,4 +77,6 @@ spec:
       - name: app-pfx-volume
         secret:
           secretName: {{ .Values.names.secret.certPfxFile }}
+      nodeSelector:
+        kubernetes.io/os: linux
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}

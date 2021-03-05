@@ -18,6 +18,7 @@
       - Azure Container Registry   
    -  Deploy a cluster resource group with the following resources:
       - AKS (Azure Kubernetes Service) Cluster
+   - Optionally deploy a Windows OS node pool into the AKS cluster (see the SHOULD_DEPLOY_WINDOWS_NODE_POOL variable)
 - Run the "build-push-docker-image.sh" script to build the docker image and push it to your newly created container registry
 - Go into the Azure portal and then to the NSG tied to the jumpbox VM, and assign a new Inbound rule to allow port 22 (SSH) from your IP address
 - Zip up the entire "deployment" directory:
